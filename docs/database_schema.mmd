@@ -1,0 +1,119 @@
+erDiagram
+    users ||--o{ ingredients : "1 a N (Catálogo por estudiante)"
+    users ||--o{ recipes : "1 a N (Recetas por estudiante)"
+    
+    ingredient_categories ||--o{ ingredients : "1 a N (Clasificación)"
+    measurement_units ||--o{ ingredients : "1 a N (Unidad de Compra y Uso)"
+    measurement_units ||--o{ recipe_ingredients : "1 a N (Unidad en Receta)"
+    
+    recipes ||--|{ recipe_ingredients : "1 a N (Desglose de ingredientes)"
+    ingredients ||--o{ recipe_ingredients : "1 a N (Uso en formulación)"
+    
+    ingredients ||--o{ ingredient_price_history : "1 a N (Historial de variaciones)"
+    recipes ||--o{ recipe_cost_audit_log : "1 a N (Auditoría de recálculos en cascada)"
+    ingredients ||--o{ recipe_cost_audit_log : "0..1 a N (Insumo detonador)"
+
+    users {
+        uuid id PK
+        varchar email UK "Correo institucional único"
+        varchar password_hash "Hash seguro de contraseña"
+        varchar full_name "Nombre del estudiante"
+        varchar student_id "Matrícula académica"
+        varchar role "ESTUDIANTE | DOCENTE | ADMIN"
+        boolean is_active "Usuario activo"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    measurement_units {
+        uuid id PK
+        varchar name UK "Nombre de la unidad (ej. Kilogramo)"
+        varchar symbol UK "Símbolo (ej. kg, g, l, ml, pz)"
+        varchar unit_type "MASS | VOLUME | UNIT"
+        varchar base_unit_symbol "Símbolo base (g, ml, pz)"
+        decimal conversion_factor "Factor multiplicador a la unidad base"
+        boolean is_active "Unidad disponible"
+        timestamp created_at
+    }
+
+    ingredient_categories {
+        uuid id PK
+        varchar name UK "Lácteos, Carnes, Verduras, etc."
+        text description "Descripción de la categoría"
+        boolean is_active
+        timestamp created_at
+    }
+
+    ingredients {
+        uuid id PK
+        uuid user_id FK "Estudiante propietario (CU-01)"
+        uuid category_id FK "Categoría del insumo"
+        varchar name "Nombre comercial o culinario"
+        varchar brand "Marca comercial (opcional)"
+        uuid purchase_unit_id FK "Unidad comercial de compra"
+        decimal purchase_quantity "Cantidad en presentación de compra"
+        decimal purchase_price "Costo de adquisición"
+        uuid usage_unit_id FK "Unidad de dosificación en recetas"
+        decimal unit_cost_base "Costo por unidad de uso base"
+        decimal default_waste_pct "% de merma estándar (0.00 a 99.99)"
+        text notes "Observaciones técnicas"
+        boolean is_active "Baja lógica"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    recipes {
+        uuid id PK
+        uuid user_id FK "Estudiante propietario"
+        varchar name "Nombre de la receta o platillo"
+        text description "Procedimiento o descripción breve"
+        decimal yield_portions "Rendimiento en porciones"
+        int prep_time_minutes "Tiempo estimado de preparación"
+        decimal total_cost "Costo total de producción (CU-06)"
+        decimal cost_per_portion "Costo unitario por porción"
+        decimal profit_margin_pct "% Margen de ganancia deseado (CU-07)"
+        decimal suggested_sale_price "Precio de venta sugerido"
+        decimal target_sale_price "Precio de venta fijado por el usuario"
+        decimal net_profit_per_portion "Utilidad neta estimada por porción"
+        varchar status "DRAFT | ACTIVE | ARCHIVED"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    recipe_ingredients {
+        uuid id PK
+        uuid recipe_id FK "Receta contenedora"
+        uuid ingredient_id FK "Insumo utilizado"
+        decimal quantity "Cantidad bruta requerida"
+        uuid measurement_unit_id FK "Unidad de medida empleada"
+        decimal waste_pct_override "% Merma particular para esta receta"
+        decimal effective_waste_pct "% Merma efectiva aplicada"
+        decimal unit_cost_snapshot "Costo unitario al momento del cálculo"
+        decimal subtotal_cost "Subtotal monetario del insumo (CU-06)"
+        text notes "Técnica de corte o notas"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ingredient_price_history {
+        uuid id PK
+        uuid ingredient_id FK "Insumo cuyo precio varió (CU-08)"
+        decimal old_purchase_price "Precio de compra anterior"
+        decimal new_purchase_price "Nuevo precio de compra"
+        decimal old_unit_cost_base "Costo unitario base anterior"
+        decimal new_unit_cost_base "Nuevo costo unitario base"
+        varchar change_reason "Motivo del cambio de precio"
+        timestamp recorded_at "Fecha y hora del cambio"
+    }
+
+    recipe_cost_audit_log {
+        uuid id PK
+        uuid recipe_id FK "Receta recalculada (CU-08)"
+        uuid trigger_ingredient_id FK "Insumo causante del recálculo"
+        decimal previous_total_cost "Costo total antes de la cascada"
+        decimal new_total_cost "Nuevo costo total recalculado"
+        decimal previous_suggested_price "Precio sugerido anterior"
+        decimal new_suggested_price "Nuevo precio sugerido"
+        varchar event_type "CASCADE_UPDATE | MANUAL_RECALCULATE"
+        timestamp created_at "Momento del recálculo"
+    }
