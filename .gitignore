@@ -20,6 +20,15 @@ yarn-error.log*
 pgdata/
 *.sqlite3
 
+# Documentación del proyecto (alojada en Google Drive)
+docs/
+GEMINI.md
+*.docx
+*.pdf
+
+# Datos semilla y registros locales (sin datos en repositorio de código)
+db/init/02-seed-data.sql
+
 # Archivos del sistema y de editores
 .DS_Store
 Thumbs.db
