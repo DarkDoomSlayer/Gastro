@@ -1,72 +1,68 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
     container_name: gastro_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-gastro_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gastro_password}
-      POSTGRES_DB: ${POSTGRES_DB:-gastro_db}
+      POSTGRES_DB: gastro_db
+      POSTGRES_USER: gastro_user
+      POSTGRES_PASSWORD: gastro_password123
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
-      - gastro_pgdata:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d:ro
-    networks:
-      - gastro_network
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gastro_user} -d ${POSTGRES_DB:-gastro_db}"]
+      test: ["CMD-SHELL", "pg_isready -U gastro_user -d gastro_db"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  api:
+  backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev
-    container_name: gastro_api
+      dockerfile: Dockerfile
+    container_name: gastro_backend
     restart: unless-stopped
-    environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql://gastro_user:gastro_password@db:5432/gastro_db}
-      - NODE_ENV=${NODE_ENV:-development}
-      - PORT=${BACKEND_PORT:-4000}
-    ports:
-      - "${BACKEND_PORT:-4000}:4000"
     volumes:
       - ./backend:/app
-      - /app/node_modules
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0
+      - SECRET_KEY=django-insecure-gastro-costeo-dev-key-2026
+      - DB_ENGINE=postgres
+      - DB_NAME=gastro_db
+      - DB_USER=gastro_user
+      - DB_PASSWORD=gastro_password123
+      - DB_HOST=db
+      - DB_PORT=5432
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - gastro_network
-    command: sh -c "npm install && npm run dev"
 
-  web:
+  frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: gastro_web
+      dockerfile: Dockerfile
+    container_name: gastro_frontend
     restart: unless-stopped
-    environment:
-      - NODE_ENV=${NODE_ENV:-development}
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:4000}
-    ports:
-      - "${FRONTEND_PORT:-3000}:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BACKEND_INTERNAL_URL=http://backend:8000
     depends_on:
-      - api
-    networks:
-      - gastro_network
-    command: sh -c "npm install && npm run dev"
+      - backend
+
+  cloudflare:
+    image: cloudflare/cloudflared:latest
+    container_name: gastro_cloudflare
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://frontend:5173
+    depends_on:
+      - frontend
 
 volumes:
-  gastro_pgdata:
-
-networks:
-  gastro_network:
-    driver: bridge
+  postgres_data:

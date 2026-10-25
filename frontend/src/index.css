@@ -1,8 +1,666 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  
+  /* Tema Claro (Paleta Bistró Culinario Alta Gama Armónica) */
+  --bg-page: #fbf9f6;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f5eee6;
+  --bg-surface-subtle: #faf6f0;
+  --bg-input: #ffffff;
+  --border-subtle: #e8ded2;
+  --border-strong: #d4c5b3;
+  
+  --text-main: #241c16;
+  --text-muted: #736557;
+  --text-light: #a39586;
+  
+  /* Tono Principal Culinario (Terracota / Ámbar tostado) */
+  --primary-accent: #b45309;
+  --primary-hover: #92400e;
+  --primary-subtle: #fdf3e7;
+  --primary-text: #78350f;
+  --primary-border: #f4d6b6;
+
+  /* Resaltados armónicos en la misma familia cálida bistró */
+  --highlight-title: #853706;       /* Nombre del platillo: terracota profundo y refinado */
+  --highlight-number: #9a3412;      /* Porciones y números clave */
+  --highlight-card-bg: #fdf6ee;     /* Fondo de métricas destacadas */
+  --highlight-card-border: #ecd5bf; /* Borde suave de métricas */
+
+  /* Badges de clasificación armónicos */
+  --badge-mp-bg: #fdf3e7;
+  --badge-mp-text: #853706;
+  --badge-mp-border: #f4d4b3;
+
+  --badge-comp-bg: #f2ece4;
+  --badge-comp-text: #594738;
+  --badge-comp-border: #dccfc2;
+
+  --badge-alert-bg: #fef2f2;
+  --badge-alert-text: #991b1b;
+  --badge-alert-border: #fecaca;
+
+  --badge-success-bg: #f0fdf4;
+  --badge-success-text: #166534;
+  --badge-success-border: #bbf7d0;
+
+  --shadow-sm: 0 1px 3px 0 rgba(36, 28, 22, 0.04);
+  --shadow-md: 0 4px 20px -2px rgba(36, 28, 22, 0.07), 0 2px 6px -1px rgba(36, 28, 22, 0.03);
+  --shadow-lg: 0 12px 36px -4px rgba(36, 28, 22, 0.1);
+  --card-glow: 0 0 0 1px rgba(180, 83, 9, 0.08);
+
+  --radius-xl: 20px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
+[data-theme='dark'] {
+  /* Modo Oscuro (Noir Cava Gastronómica Cálida Armónica) */
+  --bg-page: #14110f;
+  --bg-surface: #1e1916;
+  --bg-surface-elevated: #29221d;
+  --bg-surface-subtle: #191412;
+  --bg-input: #171311;
+  --border-subtle: #382e27;
+  --border-strong: #4f4238;
+  
+  --text-main: #f7f1eb;
+  --text-muted: #ad9e91;
+  --text-light: #736558;
+  
+  /* Tono Principal Cálido Ámbar Cobre */
+  --primary-accent: #d97706;
+  --primary-hover: #b45309;
+  --primary-subtle: #2d1d0c;
+  --primary-text: #fde68a;
+  --primary-border: #523416;
+
+  /* Resaltados armónicos en modo oscuro */
+  --highlight-title: #fbbf24;       /* Nombre del platillo: ámbar cálido y brillante */
+  --highlight-number: #f59e0b;      /* Porciones y números clave */
+  --highlight-card-bg: #261a0e;     /* Fondo de métricas destacadas */
+  --highlight-card-border: #4d3319; /* Borde métricas */
+
+  /* Badges armónicos oscuros */
+  --badge-mp-bg: rgba(217, 119, 6, 0.16);
+  --badge-mp-text: #fcd34d;
+  --badge-mp-border: rgba(217, 119, 6, 0.35);
+
+  --badge-comp-bg: rgba(255, 255, 255, 0.06);
+  --badge-comp-text: #d6ccc2;
+  --badge-comp-border: rgba(255, 255, 255, 0.12);
+
+  --badge-alert-bg: rgba(220, 38, 38, 0.15);
+  --badge-alert-text: #fca5a5;
+  --badge-alert-border: rgba(220, 38, 38, 0.3);
+
+  --badge-success-bg: rgba(22, 163, 74, 0.15);
+  --badge-success-text: #86efac;
+  --badge-success-border: rgba(22, 163, 74, 0.3);
+
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 24px -2px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 40px -4px rgba(0, 0, 0, 0.7);
+  --card-glow: 0 0 0 1px rgba(217, 119, 6, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
 
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
+
+h1, h2, h3, .brand-font {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+button, input, select {
+  font-family: var(--font-sans);
+}
+
+/* Tarjetas Gourmet Modernas */
+.card-gourmet {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-gourmet:hover {
+  border-color: var(--border-strong);
+}
+
+/* Badges Armónicos */
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.badge-materia-prima {
+  background: var(--badge-mp-bg);
+  color: var(--badge-mp-text);
+  border: 1px solid var(--badge-mp-border);
+}
+
+.badge-complementaria {
+  background: var(--badge-comp-bg);
+  color: var(--badge-comp-text);
+  border: 1px solid var(--badge-comp-border);
+}
+
+/* Botones */
+.btn-primary {
+  background: var(--primary-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 10px rgba(180, 83, 9, 0.22);
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(180, 83, 9, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--bg-surface-elevated);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-strong);
+}
+
+/* Inputs y Selects */
+.input-field {
+  width: 100%;
+  padding: 9px 13px;
+  border-radius: var(--radius-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  outline: none;
+  font-size: 0.88rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-field:focus {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.12);
+}
+
+/* Píldoras de selección (Segmented control) */
+.radio-pill-group {
+  display: inline-flex;
+  background: var(--bg-surface-elevated);
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  gap: 3px;
+}
+
+.radio-pill {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radio-pill.active {
+  background: var(--bg-surface);
+  color: var(--primary-accent);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Tarjeta métrica de costeo armonizada */
+.metric-tile {
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.metric-tile:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+/* Scrollbar refinada */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* =========================================
+   ESTILOS DE IMPRESIÓN Y REPORTE PDF
+   ========================================= */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 1cm 0.8cm;
+  }
+
+  *, *::before, *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #1f1b18 !important;
+    background-image: none !important;
+    font-size: 10pt;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  div[style*="max-width"], div[style*="maxWidth"] {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Evitar cualquier scrollbar o desbordamiento en contenedores */
+  div[style*="overflow"], div[style*="overflow-x"], div[style*="overflowX"] {
+    overflow: visible !important;
+    overflow-x: visible !important;
+    border: none !important;
+  }
+
+  .card-gourmet {
+    box-shadow: none !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 4px !important;
+    background: #ffffff !important;
+    page-break-inside: avoid;
+    margin-bottom: 12px !important;
+    padding: 10px 12px !important;
+  }
+
+  .print-only-title {
+    display: block !important;
+  }
+
+  /* Formato claro para inputs al imprimir */
+  .input-field {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+  }
+
+  /* Quitar todos los fondos grises y de colores al imprimir */
+  div, span, strong, td, th {
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  .radio-pill-group {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .radio-pill {
+    display: none !important;
+  }
+
+  .radio-pill.active {
+    display: inline-flex !important;
+    border: 1px solid #333333 !important;
+    background: transparent !important;
+    color: #000000 !important;
+    padding: 1px 6px !important;
+    font-weight: 700 !important;
+    font-size: 8pt !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+    font-size: 8pt !important;
+    table-layout: auto !important;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  th, td {
+    border: 1px solid #d0d0d0 !important;
+    padding: 3px 5px !important;
+    background: transparent !important;
+    color: #111111 !important;
+  }
+
+  th {
+    font-size: 7.5pt !important;
+    font-weight: 800 !important;
+    border-bottom: 2px solid #999999 !important;
+  }
+
+  .badge-tag {
+    border: 1px solid #999999 !important;
+    background: transparent !important;
+    color: #111111 !important;
+    padding: 1px 4px !important;
+    font-size: 7pt !important;
+  }
+
+  .metric-tile {
+    border: 1px solid #d0d0d0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 4px 6px !important;
+  }
+}
+
+@keyframes toastSlideIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -16px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes toastSlideInModal {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-floating-container {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: 90vw;
+  width: auto;
+}
+
+.toast-floating-item {
+  pointer-events: auto;
+  animation: toastSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.28), 0 4px 10px -2px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+/* Modal Backdrop & Scroll containment */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  backdrop-filter: blur(3px);
+  overscroll-behavior: contain;
+}
+
+.modal-content {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Header responsivo para PC y móviles */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.app-header-tabs {
+  display: flex;
+  flex-shrink: 0;
+}
+
+/* En PC (pantallas mayores a 768px):
+   Ordenamos: Marca a la izquierda, Pestañas al centro/derecha, y Acciones a la derecha */
+@media (min-width: 769px) {
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+  .app-header-brand {
+    order: 1;
+  }
+  .app-header-tabs {
+    order: 2;
+    margin-left: auto;
+    margin-right: 16px;
+  }
+  .app-header-actions {
+    order: 3;
+  }
+}
+
+/* En Móviles (768px o menos):
+   Fila 1: Marca a la izquierda, Acciones (modo noche, cuenta, salir) arriba a la derecha.
+   Fila 2: Pestañas de navegación abajo ocupando todo el ancho. */
+@media (max-width: 768px) {
+  .app-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+  }
+  .app-header-brand {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 10px;
+  }
+  .app-header-brand h1 {
+    font-size: 1.25rem !important;
+    line-height: 1.2 !important;
+  }
+  .app-header-brand p {
+    font-size: 0.74rem !important;
+  }
+  .app-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .app-header-actions button {
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+  }
+  .app-header-tabs {
+    width: 100%;
+  }
+  .app-header-tabs nav {
+    width: 100%;
+  }
+  .app-header-tabs button {
+    flex: 1;
+    justify-content: center;
+    padding: 7px 8px !important;
+    font-size: 0.78rem !important;
+  }
+
+  /* Formulario rápido de insumos en receta */
+  .quick-add-grid {
+    grid-template-columns: 1fr 1fr 48px !important;
+  }
+  .quick-add-grid > .search-col {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Radio pill groups en móviles */
+  .radio-pill-group {
+    width: 100% !important;
+  }
+  .radio-pill {
+    padding: 6px 4px !important;
+    font-size: 0.72rem !important;
+    white-space: normal !important;
+    text-align: center !important;
+    line-height: 1.15 !important;
+  }
+
+  /* Compactación extrema para tablas en móviles (para ver todas las columnas sin desplazar) */
+  .table-compact-mobile {
+    font-size: 0.68rem !important;
+  }
+  .table-compact-mobile th {
+    padding: 6px 3px !important;
+    font-size: 0.62rem !important;
+    letter-spacing: 0 !important;
+  }
+  .table-compact-mobile td {
+    padding: 6px 3px !important;
+    font-size: 0.68rem !important;
+  }
+  .table-compact-mobile .badge-tag {
+    padding: 1px 4px !important;
+    font-size: 0.60rem !important;
+  }
+}
+
+
